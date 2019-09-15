@@ -1,0 +1,351 @@
+<html>
+    <style>
+
+        .body{
+            width: 100%;
+            padding: 0px;
+        }
+
+        /* Add a black background color to the top navigation */
+        .topnav {
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        /* Style the links inside the navigation bar */
+        .topnav a {
+            float: left;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .topnav #play{
+            float: left;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            background-color: #333;
+            width: 15%;
+        }
+        .topnav #play:hover{
+            color: white;
+            background-color: blue;
+            cursor:pointer;
+            transition: 0.5s ease-out;
+        }
+
+        /* Change the color of links on hover */
+        .topnav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        /* Add a color to the active/current link */
+        .topnav a.active {
+            background-color: blue;
+            color: white;
+        }
+
+        .arrowbtn {
+            padding: 20px 10px;
+            margin-left: 0px;
+            background-color: black;
+            color: white;
+            width: 27.2%;
+        }
+        .arrowbtn:hover{
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+        }
+
+        /* Modal Content/Box */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 3px solid black;
+            width: 80%; /* Could be more or less, depending on screen size */
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover, .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* The switch - the box around the slider */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* The slider */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        #continue{
+            background-color: #ccc;
+            padding: 15px;
+            font-size: 18;
+            color: black;
+            width: 100%;
+            transition: 0.7s ease-in-out;
+        }
+        #continue:hover{
+            cursor: pointer;
+            transition: 0.5s ease-in-out;
+            background-color: #2196F3;
+            color: white;
+        }
+
+    </style>
+
+    <script src="fabric.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <body>
+        <div class="topnav">
+            <a style="font-size: 20" class="active" href="#home"><b>SnipQuiz</b></a>
+            <a style="font-size: 20" href="#share">Share</a>
+            <a style="font-size: 20" href="#contact">Contact</a>
+            <button id="play" style="float: right; font-size: 20" onclick="openModal()">Play</button>
+        </div>
+
+        <div style="margin-left: 14.5%">
+            <canvas id="canvas" width="1000" height="500" style="border:2px solid #000000; margin: 0px;"></canvas>
+            <button id="fwdbtn" class="arrowbtn" style="font-size: 18">BACK</button>
+            <button id="flipbtn" class="arrowbtn" style="font-size: 18">ANSWER</button>
+            <button id="bwdbtn" class="arrowbtn" style="font-size: 18">NEXT</button>
+            
+        </div>
+
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Repeat Questions:</h2>
+                <label class="switch">
+                        <input type="checkbox" onclick="repeatSelect()">
+                        <span class="slider"></span>
+                </label>
+                <h2>Marking & Analysis:</h2>
+                <label class="switch">
+                        <input type="checkbox" onclick="markSelect()">
+                        <span class="slider"></span>
+                </label>
+                <br><br>
+                <button id="continue">Continue</button>
+            </div> 
+        </div>
+
+        <div id="qModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <canvas id="qCanvas" width="100%" height="100%" style="border:2px solid #000000; margin: 0px;"></canvas>
+            </div> 
+        </div>
+
+        <script>
+            var setsize;
+            var lastQ=-1;
+            var repeatCount=0;
+            var markCount=0;
+            var canvas = new fabric.Canvas('canvas');
+            canvas.add(new fabric.Circle({ radius: 30, fill: '#f55', top: 100, left: 100 }));
+            var qCanvas = new fabric.Canvas('qCanvas');
+    
+            canvas.selectionColor = 'rgba(0,255,0,0.3)';
+            canvas.selectionBorderColor = 'red';
+            canvas.selectionLineWidth = 5;
+
+            // Get the modal
+            var modal = document.getElementById("myModal");
+            var modal2 = document.getElementById("qModal");
+
+            // Get the button that opens the modal
+            var play = document.getElementById("play");
+            var cont = document.getElementById("continue");
+
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
+            var span2 = document.getElementsByClassName("close")[1];
+
+            // When the user clicks on the button, open the modal
+            play.onclick = function() {
+                modal.style.display = "block";
+            }
+            cont.onclick = function() {
+                modal2.style.display = "block";
+                modal.style.display = "none";
+                nextQ();
+            }
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+            span2.onclick = function() {
+                modal2.style.display = "none";
+            }
+
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+                if (event.target == modal2) {
+                    modal2.style.display = "none";
+                }
+            }
+
+            function markSelect(){
+                markCount = markCount + 1;
+                alert(markCount);
+            }
+
+            function repeatSelect(){
+                repeatCount = repeatCount + 1;
+                alert(repeatCount);
+            }
+
+            function nextQ(){
+                var random;
+                if (markCount%2==0 && repeatCount%2==0){
+                    //no marking and no repeating --> remove elements from active set
+
+                    //find set size currently
+                    //generate random number with that
+                    //produce that question
+                    //reduce set size and remove used question from list
+
+                    random = Math.random() * setsize;
+                    fabric.Image.fromURL('example.jpg', function(img){
+                        img.setWidth(600);
+                        img.setHeight(200);
+                        qCanvas.add(img);
+                    });
+                    setsize--;
+                    //remove element from array
+                }
+                else if (markCount%2==0 && repeatCount%2==1){
+                    //no marking but repeating --> choose from entire set BUT no immediate repeats
+
+                    //find set size currently
+                    //generate random number with that, ensuring that it is not equal to previous number
+                    //produce that question
+
+                    random = Math.random() * setsize;
+                    while (random==lastQ){
+                        random = Math.random() * setsize;
+                    }
+                    lastQ = random;
+                }
+                else if (markCount%2==1 && repeatCount%2==0){
+                    //marking but no repeating --> remove elements from active set
+
+                    //find set size currently
+                    //generate random number with that
+                    //produce that question
+                    //input whether student got question right and store record
+                    //reduce set size and remove used question from list
+
+                    random = Math.random() * setsize;
+                }
+                else if (markCount%2==1 && repeatCount%2==1){
+                    //marking and repeating --> choose from entire set BUT no immediate repeats
+
+                    //find set size currently
+                    //generate random number with that, ensuring that it is not equal to previous number
+                    //produce that question
+                    //input whether student got question right and store record
+
+                    random = Math.random() * setsize;
+                    while (random==lastQ){
+                        random = Math.random() * setsize;
+                    }
+                    lastQ = random;
+                }
+            }
+        </script>
+    </body>
+</html>
