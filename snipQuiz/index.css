@@ -1,0 +1,10 @@
+.page-list{
+    direction: rtl;
+    overflow:auto;
+    height: 50px;
+    width: 50px;
+}
+
+.page {
+    direction:ltr;
+}
